@@ -15,7 +15,7 @@ public class MainPanel extends JPanel {
         setLayout(layoutManager);
 
         MenuPanel menu = new MenuPanel(this);
-        SearchPanel search = new SearchPanel();
+        SearchPanel search = new SearchPanel(this);
         ResultsPanel results = new ResultsPanel();
         PassengerPanel passenger = new PassengerPanel();
 

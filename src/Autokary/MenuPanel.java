@@ -17,7 +17,7 @@ public class MenuPanel extends JPanel implements ActionListener{
         mainPanel = parentPanel;
 
         JPanel menuPanel = new JPanel(new GridLayout(2,1));
-        JPanel butPanel = new JPanel(new GridLayout(4, 1));
+        JPanel butPanel = new JPanel(new GridLayout(4, 1, 5,10));
 
         add(menuPanel);
 
