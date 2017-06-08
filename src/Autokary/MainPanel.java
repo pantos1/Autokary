@@ -17,17 +17,17 @@ public class MainPanel extends JPanel {
 
         MenuPanel menu = new MenuPanel(this);
         SearchPanel search = new SearchPanel(this, conn);
-        ResultsPanel results = new ResultsPanel();
+//        ResultsPanel results = new ResultsPanel();
         PassengerPanel passenger = new PassengerPanel();
 
         add(menu);
         add(search);
-        add(results);
+//        add(results);
         add(passenger);
 
         layoutManager.addLayoutComponent(menu, "menuPanel");
         layoutManager.addLayoutComponent(search, "searchPanel");
-        layoutManager.addLayoutComponent(results, "resultsPanel");
+//        layoutManager.addLayoutComponent(results, "resultsPanel");
         layoutManager.addLayoutComponent(passenger, "passengerPanel");
 
         layoutManager.show(this, "menuPanel");

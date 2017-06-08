@@ -2,8 +2,6 @@ package Autokary;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
@@ -22,13 +20,13 @@ public class MainFrame extends JFrame {
     protected int port = 1521;
     protected String SID = "orcl";
     protected String username = "c##Piotrek";
-    protected String password = "";
+    protected String password = "Altanka1";
 
     public MainFrame(){
         super("Autokary - panel zarządzania");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         isConnected = connectToDB();
-        if(isConnected == false){
+        if(!isConnected){
             JOptionPane.showMessageDialog(this, "Nie udało się nawiązać połączenia z bazą danych","Błąd połączenia", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }

@@ -4,14 +4,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
+
 
 /**
  * Created by Piotr on 05.06.2017.
  */
 public class MenuPanel extends JPanel implements ActionListener{
     protected MainPanel mainPanel;
-
+    private enum Actions {
+        b1, b2, b3, b4, b5, b6
+    }
     public MenuPanel(MainPanel parentPanel){
         super(new FlowLayout(FlowLayout.CENTER));
 
@@ -34,30 +36,30 @@ public class MenuPanel extends JPanel implements ActionListener{
         JButton but4 = new JButton("Wyjście");
 
         butPanel.add(but1);
-        but1.setActionCommand("but1Action");
+        but1.setActionCommand(Actions.b1.name());
         but1.addActionListener(this);
         butPanel.add(but2);
-        but2.setActionCommand("but2Action");
+        but2.setActionCommand(Actions.b2.name());
         but2.addActionListener(this);
         butPanel.add(but3);
-        but3.setActionCommand("but3Action");
+        but3.setActionCommand(Actions.b3.name());
         but3.addActionListener(this);
         butPanel.add(but4);
-        but4.setActionCommand("but4Action");
+        but4.setActionCommand(Actions.b4.name());
         but4.addActionListener(this);
 
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand() == "but1Action"){
+        if(e.getActionCommand() == Actions.b1.name()){
             mainPanel.layoutManager.show(mainPanel, "searchPanel");
         }
-        else if(e.getActionCommand() == "but2Action"){
+        else if(e.getActionCommand() == Actions.b2.name()){
         }
-        else if(e.getActionCommand() == "but3Action"){
+        else if(e.getActionCommand() == Actions.b3.name()){
         }
-        else if(e.getActionCommand() == "but4Action"){
+        else if(e.getActionCommand() == Actions.b4.name()){
             String[] options = new String[] {"Tak", "Nie"};
             int d1 = JOptionPane.showOptionDialog(null, "Czy na pewno chcesz zamknąć program?", "Kończenie pracy", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
                     null, options, options[0]);
