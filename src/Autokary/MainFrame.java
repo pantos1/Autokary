@@ -21,8 +21,8 @@ public class MainFrame extends JFrame {
     protected String hostname = "localhost";
     protected int port = 1521;
     protected String SID = "orcl";
-    protected String username = "SYSTEM";
-    protected String password = "Altanka1";
+    protected String username = "";
+    protected String password = "";
 
     public MainFrame(){
         super("Autokary - panel zarządzania");
