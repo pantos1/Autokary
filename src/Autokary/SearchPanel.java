@@ -23,6 +23,8 @@ public class SearchPanel extends JPanel implements ActionListener{
     protected MainPanel mainPanel;
     protected GridLayout contentManager;
     protected Connection conn;
+    protected ResultSet rs;
+    protected Statement stmt;
 
     public SearchPanel(MainPanel parentPanel, Connection conn){
         mainPanel = parentPanel;
@@ -55,16 +57,18 @@ public class SearchPanel extends JPanel implements ActionListener{
         JLabel date = new JLabel("Data wyjazdu:");
         JLabel search = new JLabel("Szukaj");
 
-        ResultSet rs = Select("SELECT 'przystanek_poczatkowy' FROM Trasy GROUP BY 'przystanek_poczatkowy'");
+        Select("SELECT \"przystanek_poczatkowy\" FROM Trasy GROUP BY \"przystanek_poczatkowy\"");
         Vector<String> v = new Vector<String>();
         try {
             while (rs.next()){
                 v.addElement(rs.getString("przystanek_poczatkowy"));
             }
+            rs.close();
+            stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        JComboBox fromList = new JComboBox(v);
+        JComboBox fromList = new JComboBox(new DefaultComboBoxModel(v));
         JComboBox toList = new JComboBox();
 
         UtilDateModel model = new UtilDateModel();
@@ -108,15 +112,13 @@ public class SearchPanel extends JPanel implements ActionListener{
         }
     }
 
-    protected ResultSet Select (String input){
+    protected void Select (String input){
         try {
-            Statement stmt = conn.createStatement();
+            stmt = conn.createStatement();
             String sql = input;
-            ResultSet rs = stmt.executeQuery(sql);
-            return rs;
+            rs = stmt.executeQuery(sql);
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
         }
     }
 }
