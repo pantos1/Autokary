@@ -55,7 +55,7 @@ public class SearchPanel extends JPanel implements ActionListener{
         JLabel date = new JLabel("Data wyjazdu:");
         JLabel search = new JLabel("Szukaj");
 
-        ResultSet rs = Select("SELECT przystanek_poczatkowy FROM Trasy GROUP BY przystanek_poczatkowy");
+        ResultSet rs = Select("SELECT 'przystanek_poczatkowy' FROM Trasy GROUP BY 'przystanek_poczatkowy'");
         Vector<String> v = new Vector<String>();
         try {
             while (rs.next()){

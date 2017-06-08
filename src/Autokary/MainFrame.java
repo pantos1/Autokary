@@ -21,7 +21,7 @@ public class MainFrame extends JFrame {
     protected String hostname = "localhost";
     protected int port = 1521;
     protected String SID = "orcl";
-    protected String username = "";
+    protected String username = "c##Piotrek";
     protected String password = "";
 
     public MainFrame(){
