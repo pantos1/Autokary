@@ -3,7 +3,14 @@ package Autokary;
 import javax.swing.*;
 import javax.swing.text.DateFormatter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
+import java.util.Vector;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -12,20 +19,22 @@ import org.jdatepicker.impl.UtilDateModel;
 /**
  * Created by Piotr on 05.06.2017.
  */
-public class SearchPanel extends JPanel {
+public class SearchPanel extends JPanel implements ActionListener{
     protected MainPanel mainPanel;
     protected GridLayout contentManager;
+    protected Connection conn;
 
-    public SearchPanel(MainPanel parentPanel){
+    public SearchPanel(MainPanel parentPanel, Connection conn){
         mainPanel = parentPanel;
+        this.conn = conn;
 
         contentManager = new GridLayout(4,2);
 
         JPanel titlePanel = new JPanel();
         JPanel contentPanel = new JPanel(contentManager);
 
-        add(titlePanel, BorderLayout.LINE_START);
-        add(contentPanel, BorderLayout.CENTER);
+        add(titlePanel, BorderLayout.NORTH);
+        add(contentPanel, BorderLayout.SOUTH);
 
 
         ImageIcon returnIcon = new ImageIcon("img/back.png","Wróć");
@@ -36,7 +45,9 @@ public class SearchPanel extends JPanel {
         JLabel title = new JLabel("Wyszukaj połączenie");
         title.setFont(new Font("Verdana", 1, 20));
 
-        titlePanel.add(returnButton, BorderLayout.LINE_START);
+        titlePanel.add(returnButton, BorderLayout.EAST);
+        returnButton.setActionCommand("returnButtonAction");
+        returnButton.addActionListener(this);
         titlePanel.add(title,BorderLayout.CENTER);
 
         JLabel from = new JLabel("Z:");
@@ -44,7 +55,16 @@ public class SearchPanel extends JPanel {
         JLabel date = new JLabel("Data wyjazdu:");
         JLabel search = new JLabel("Szukaj");
 
-        JComboBox fromList = new JComboBox();
+        ResultSet rs = Select("SELECT przystanek_poczatkowy FROM Trasy GROUP BY przystanek_poczatkowy");
+        Vector<String> v = new Vector<String>();
+        try {
+            while (rs.next()){
+                v.addElement(rs.getString("przystanek_poczatkowy"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        JComboBox fromList = new JComboBox(v);
         JComboBox toList = new JComboBox();
 
         UtilDateModel model = new UtilDateModel();
@@ -79,5 +99,24 @@ public class SearchPanel extends JPanel {
         contentManager.addLayoutComponent("searchButton", searchButton);
 
 
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getActionCommand() == "returnButtonAction"){
+            mainPanel.layoutManager.show(mainPanel, "menuPanel");
+        }
+    }
+
+    protected ResultSet Select (String input){
+        try {
+            Statement stmt = conn.createStatement();
+            String sql = input;
+            ResultSet rs = stmt.executeQuery(sql);
+            return rs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -2,6 +2,7 @@ package Autokary;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Connection;
 
 /**
  * Created by Piotr on 05.06.2017.
@@ -10,12 +11,12 @@ public class MainPanel extends JPanel {
 
     protected CardLayout layoutManager;
 
-    public MainPanel(){
+    public MainPanel(Connection conn){
         layoutManager = new CardLayout();
         setLayout(layoutManager);
 
         MenuPanel menu = new MenuPanel(this);
-        SearchPanel search = new SearchPanel(this);
+        SearchPanel search = new SearchPanel(this, conn);
         ResultsPanel results = new ResultsPanel();
         PassengerPanel passenger = new PassengerPanel();
 
