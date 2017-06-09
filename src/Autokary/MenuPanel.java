@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 public class MenuPanel extends JPanel implements ActionListener{
     protected MainPanel mainPanel;
     private enum Actions {
-        b1, b2, b3, b4, b5, b6
+        b1, b2, b3, b4
     }
     public MenuPanel(MainPanel parentPanel){
         super(new FlowLayout(FlowLayout.CENTER));
@@ -55,11 +55,11 @@ public class MenuPanel extends JPanel implements ActionListener{
         if(e.getActionCommand() == Actions.b1.name()){
             mainPanel.layoutManager.show(mainPanel, "searchPanel");
         }
-        else if(e.getActionCommand() == Actions.b2.name()){
+        if(e.getActionCommand() == Actions.b2.name()){
         }
-        else if(e.getActionCommand() == Actions.b3.name()){
+        if(e.getActionCommand() == Actions.b3.name()){
         }
-        else if(e.getActionCommand() == Actions.b4.name()){
+        if(e.getActionCommand() == Actions.b4.name()){
             String[] options = new String[] {"Tak", "Nie"};
             int d1 = JOptionPane.showOptionDialog(null, "Czy na pewno chcesz zamknąć program?", "Kończenie pracy", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
                     null, options, options[0]);

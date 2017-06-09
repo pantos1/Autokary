@@ -18,7 +18,7 @@ public class MainPanel extends JPanel {
         MenuPanel menu = new MenuPanel(this);
         SearchPanel search = new SearchPanel(this, conn);
 //        ResultsPanel results = new ResultsPanel();
-        PassengerPanel passenger = new PassengerPanel();
+        PassengerPanel passenger = new PassengerPanel(this, conn);
 
         add(menu);
         add(search);

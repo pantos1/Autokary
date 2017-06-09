@@ -30,7 +30,8 @@ public class SearchPanel extends JPanel implements ActionListener{
     protected JComboBox<Date> dateList;
     protected String selectedStopA;
     protected String selectedStopB;
-    protected Date selectedDate;
+    protected java.sql.Date selectedDate;
+    static protected int selectedRouteID;
     private enum Actions {
         ret, from, to, date,search
     }
@@ -115,6 +116,7 @@ public class SearchPanel extends JPanel implements ActionListener{
         contentManager.addLayoutComponent("toList", toList);
         contentManager.addLayoutComponent("dateLabel", date);
 //        contentManager.addLayoutComponent("datePicker", datePicker);
+        contentManager.addLayoutComponent("dateList",dateList);
         contentManager.addLayoutComponent("searchLabel", search);
         contentManager.addLayoutComponent("searchButton", searchButton);
 
@@ -126,7 +128,7 @@ public class SearchPanel extends JPanel implements ActionListener{
         if(e.getActionCommand() == Actions.ret.name()){
             mainPanel.layoutManager.show(mainPanel, "menuPanel");
         }
-        else if(e.getActionCommand() == Actions.from.name()){
+        if(e.getActionCommand() == Actions.from.name()){
             JComboBox<String> cb = (JComboBox<String>) e.getSource();
             selectedStopA = (String) cb.getSelectedObjects()[0];
             Vector<String> toData = Select("SELECT \"przystanek_koncowy\" " +
@@ -135,7 +137,7 @@ public class SearchPanel extends JPanel implements ActionListener{
                     " = '" + selectedStopA +"'");
             toList.setModel(new DefaultComboBoxModel<String>(toData));
         }
-        else if(e.getActionCommand() == Actions.to.name()){
+        if(e.getActionCommand() == Actions.to.name()){
             JComboBox<String> cb = (JComboBox<String>) e.getSource();
             selectedStopB = (String) cb.getSelectedObjects()[0];
             Vector<String> routeData = Select("SELECT \"id_trasy\" FROM TRASY WHERE \"przystanek_poczatkowy\" = '" + selectedStopA + "' AND \"przystanek_koncowy\" = '" + selectedStopB +"'");
@@ -146,11 +148,15 @@ public class SearchPanel extends JPanel implements ActionListener{
                             + routeData.lastElement());
             dateList.setModel(new DefaultComboBoxModel<Date>(dateData));
         }
-        else if(e.getActionCommand() == Actions.date.name()){
+        if(e.getActionCommand() == Actions.date.name()){
             JComboBox<Date> cb = (JComboBox<Date>) e.getSource();
-            selectedDate = (Date) cb.getSelectedObjects()[0];
+            selectedDate = (java.sql.Date) cb.getSelectedObjects()[0];
+            Vector<String> routeData = Select("SELECT \"id_kursu\" " +
+                    "FROM Kursy " +
+                    "WHERE \"data\" =" + "TO_DATE('" + selectedDate + "', 'yyyy-mm-dd')");
+            selectedRouteID = Integer.parseInt(routeData.lastElement());
         }
-        else if(e.getActionCommand() == Actions.search.name()){
+        if(e.getActionCommand() == Actions.search.name()){
             mainPanel.layoutManager.show(mainPanel, "passengerPanel");
         }
     }
