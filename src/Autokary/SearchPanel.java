@@ -31,6 +31,7 @@ public class SearchPanel extends JPanel implements ActionListener{
     protected String selectedStopA;
     protected String selectedStopB;
     protected java.sql.Date selectedDate;
+    protected Vector<String> routeData;
     static protected int selectedRouteID;
     private enum Actions {
         ret, from, to, date,search
@@ -140,7 +141,7 @@ public class SearchPanel extends JPanel implements ActionListener{
         if(e.getActionCommand() == Actions.to.name()){
             JComboBox<String> cb = (JComboBox<String>) e.getSource();
             selectedStopB = (String) cb.getSelectedObjects()[0];
-            Vector<String> routeData = Select("SELECT \"id_trasy\" FROM TRASY WHERE \"przystanek_poczatkowy\" = '" + selectedStopA + "' AND \"przystanek_koncowy\" = '" + selectedStopB +"'");
+            routeData = Select("SELECT \"id_trasy\" FROM TRASY WHERE \"przystanek_poczatkowy\" = '" + selectedStopA + "' AND \"przystanek_koncowy\" = '" + selectedStopB +"'");
             Vector<Date> dateData =
                     SelectDate("SELECT \"data\" FROM KURSY" +
                             " INNER JOIN POZYCJE_ROZKLADU_JAZDY ON KURSY.\"id_rozkladu\" = POZYCJE_ROZKLADU_JAZDY.\"id_rozkladu\"" +
@@ -152,8 +153,8 @@ public class SearchPanel extends JPanel implements ActionListener{
             JComboBox<Date> cb = (JComboBox<Date>) e.getSource();
             selectedDate = (java.sql.Date) cb.getSelectedObjects()[0];
             Vector<String> routeData = Select("SELECT \"id_kursu\" " +
-                    "FROM Kursy " +
-                    "WHERE \"data\" =" + "TO_DATE('" + selectedDate + "', 'yyyy-mm-dd')");
+                    "FROM Kursy FULL OUTER JOIN POZYCJE_ROZKLADU_JAZDY ON KURSY.\"id_kursu\" = POZYCJE_ROZKLADU_JAZDY.\"id_kursu\"" +
+                    "WHERE \"data\" =" + "TO_DATE('" + selectedDate + "', 'yyyy-mm-dd') AND \"przystanek_poczatkowy\" = ");
             selectedRouteID = Integer.parseInt(routeData.lastElement());
         }
         if(e.getActionCommand() == Actions.search.name()){

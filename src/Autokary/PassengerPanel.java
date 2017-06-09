@@ -26,7 +26,7 @@ public class PassengerPanel extends JPanel implements ActionListener {
     protected String passengersName;
     protected String passengersSurname;
     protected String passengersEmail;
-    protected Date passengersDOB;
+    protected String passengersDOB;
     protected int passengersID;
     protected ResultSet rs;
     protected Statement stmt;
@@ -123,31 +123,31 @@ public class PassengerPanel extends JPanel implements ActionListener {
             mainPanel.layoutManager.show(mainPanel, "searchPanel");
         }
         if(e.getActionCommand() == Actions.name.name()){
-            JTextField tf = (JTextField) e.getSource();
-            passengersName = tf.getText();
+            passengersName = nameTextField.getText();
         }
         if(e.getActionCommand() == Actions.surname.name()){
-            JTextField tf = (JTextField) e.getSource();
-            passengersSurname = tf.getText();
+            passengersSurname = surnameTextField.getText();
         }
         if(e.getActionCommand() == Actions.email.name()){
-            JTextField tf = (JTextField) e.getSource();
-            passengersEmail = tf.getText();
+            passengersEmail = emailTextField.getText();
         }
         if(e.getActionCommand() == Actions.DOB.name()){
-            JFormattedTextField tf = (JFormattedTextField) e.getSource();
-            passengersDOB = (Date) tf.getValue();
+            passengersDOB = dobTextField.getText();
         }
         if(e.getActionCommand() == Actions.next.name()){
             int n;
             int numberOfPassengers;
+            passengersName = nameTextField.getText();
+            passengersSurname = surnameTextField.getText();
+//            passengersEmail = emailTextField.getText();
+            passengersDOB = dobTextField.getText();
             try {
                 stmt = conn.createStatement();
                 String sql = "SELECT COUNT(*) " +
                         "FROM Pasazerowie " +
                         "WHERE \"imię\" = '" + passengersName +
                         "' AND \"nazwisko\" ='" + passengersSurname +
-                        "' AND \"data_urodzenia_pasażera\" ='" + passengersDOB + "'";
+                        "' AND \"data_urodzenia_pasażera\" = TO_DATE('" + passengersDOB + "', 'yyyy-mm-dd')";
                 rs = stmt.executeQuery(sql);
                 if(rs.next()) {
                     numberOfPassengers = rs.getInt(1);
@@ -157,14 +157,13 @@ public class PassengerPanel extends JPanel implements ActionListener {
                         stmt = conn.createStatement();
                         sql = "INSERT INTO Pasazerowie" +
                                 "(\"id_pasażera\", \"imię\", \"nazwisko\", \"data_urodzenia_pasażera\")" +
-                                "VALUES (seq_pasażer.nextval, '" + passengersName + "'," + passengersSurname + "'," + passengersDOB + "')";
-                        String[] keys = new String[]{"\"id_pasazera\""};
-                        n = stmt.executeUpdate(sql, keys);
+                                "VALUES (seq_pasażer.nextval, '" + passengersName + "','" + passengersSurname + "',TO_DATE('" + passengersDOB + "', 'yyyy-mm-dd'))";
+                        n = stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
                         if (n == 0) {
                             JOptionPane.showMessageDialog(this, "Nie udało się dodać pasażera do bazy danych", "Błąd wstawiania", JOptionPane.ERROR_MESSAGE);
                         }
-                        if (rs.next()) rs = stmt.getGeneratedKeys();
-                        passengersID = rs.getInt(1);
+                        rs = stmt.getGeneratedKeys();
+                        if(rs.next()) passengersID = rs.getInt(1);
                         stmt.close();
                     } else {
                         stmt = conn.createStatement();
@@ -172,22 +171,21 @@ public class PassengerPanel extends JPanel implements ActionListener {
                                 "FROM Pasazerowie " +
                                 "WHERE \"imię\" = '" + passengersName +
                                 "' AND \"nazwisko\" ='" + passengersSurname +
-                                "' AND \"data_urodzenia_pasażera\" ='" + passengersDOB + "'";
+                                "' AND \"data_urodzenia_pasażera\" = TO_DATE('" + passengersDOB + "', 'yyyy-mm-dd')";
                         rs = stmt.executeQuery(sql);
-                        passengersID = rs.getInt(1);
+                        if(rs.next()) passengersID = rs.getInt(1);
                         rs.close();
                         stmt.close();
                     }
                 }
                 stmt = conn.createStatement();
                 sql = "INSERT INTO Rezerwacje " +
-                        "(\"id_kursu\", \"id_pasazera\", \"cena\", \"zaplacone\") " +
-                        "VALUES (" + SearchPanel.selectedRouteID + "," + passengersID + ", 100, 1) ";
+                        "(\"id_rezerwacji\",\"id_kursu\", \"id_pasażera\", \"cena_biletu\", \"zaplacone\") " +
+                        "VALUES (seq_rezerwacja.nextval," + SearchPanel.selectedRouteID + "," + passengersID + ", 100, 1) ";
                 n = stmt.executeUpdate(sql);
                 if(n == 0){
                     JOptionPane.showMessageDialog(this, "Nie udało się dodać rezerwacji","Błąd wstawiania", JOptionPane.ERROR_MESSAGE);
                 }
-                rs.close();
                 stmt.close();
             }
             catch (SQLException ex){
