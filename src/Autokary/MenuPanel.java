@@ -56,6 +56,7 @@ public class MenuPanel extends JPanel implements ActionListener{
             mainPanel.layoutManager.show(mainPanel, "searchPanel");
         }
         if(e.getActionCommand() == Actions.b2.name()){
+            mainPanel.layoutManager.show(mainPanel, "plannerPanel");
         }
         if(e.getActionCommand() == Actions.b3.name()){
         }
