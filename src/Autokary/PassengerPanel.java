@@ -27,7 +27,7 @@ public class PassengerPanel extends JPanel implements ActionListener {
     protected String passengersSurname;
     protected String passengersEmail;
     protected String passengersDOB;
-    protected int passengersID;
+    protected Integer passengersID;
     protected ResultSet rs;
     protected Statement stmt;
     private enum Actions {
@@ -158,12 +158,13 @@ public class PassengerPanel extends JPanel implements ActionListener {
                         sql = "INSERT INTO Pasazerowie" +
                                 "(\"id_pasażera\", \"imię\", \"nazwisko\", \"data_urodzenia_pasażera\")" +
                                 "VALUES (seq_pasażer.nextval, '" + passengersName + "','" + passengersSurname + "',TO_DATE('" + passengersDOB + "', 'yyyy-mm-dd'))";
-                        n = stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+                        n = stmt.executeUpdate(sql, 1);
                         if (n == 0) {
                             JOptionPane.showMessageDialog(this, "Nie udało się dodać pasażera do bazy danych", "Błąd wstawiania", JOptionPane.ERROR_MESSAGE);
                         }
                         rs = stmt.getGeneratedKeys();
                         if(rs.next()) passengersID = rs.getInt(1);
+                        rs.close();
                         stmt.close();
                     } else {
                         stmt = conn.createStatement();
@@ -186,11 +187,28 @@ public class PassengerPanel extends JPanel implements ActionListener {
                 if(n == 0){
                     JOptionPane.showMessageDialog(this, "Nie udało się dodać rezerwacji","Błąd wstawiania", JOptionPane.ERROR_MESSAGE);
                 }
+                else{
+                    JOptionPane.showMessageDialog(this, "Rezerwacja dodana.", "", JOptionPane.INFORMATION_MESSAGE);
+                }
                 stmt.close();
+//                mainPanel.search.clearForm();
+//                clearForm();
+                mainPanel.layoutManager.show(mainPanel, "menuPanel");
             }
             catch (SQLException ex){
                 ex.printStackTrace();
             }
         }
+    }
+
+    public void clearForm(){
+        nameTextField.setText(null);
+        surnameTextField.setText(null);
+        dobTextField.setText(null);
+
+        passengersName = null;
+        passengersSurname = null;
+        passengersDOB = null;
+        passengersID = null;
     }
 }

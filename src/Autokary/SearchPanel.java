@@ -1,21 +1,17 @@
 package Autokary;
 
 import javax.swing.*;
-import javax.swing.text.DateFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
-import java.util.Properties;
 import java.util.Vector;
-
-import org.jdatepicker.impl.JDatePanelImpl;
-import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.UtilDateModel;
 
 /**
  * Created by Piotr on 05.06.2017.
@@ -26,13 +22,14 @@ public class SearchPanel extends JPanel implements ActionListener{
     protected Connection conn;
     protected ResultSet rs;
     protected Statement stmt;
+    protected JComboBox<String> fromList;
     protected JComboBox<String> toList;
     protected JComboBox<Date> dateList;
     protected String selectedStopA;
     protected String selectedStopB;
     protected java.sql.Date selectedDate;
     protected Vector<String> routeData;
-    static protected int selectedRouteID;
+    static protected Integer selectedRouteID;
     private enum Actions {
         ret, from, to, date,search
     }
@@ -73,22 +70,13 @@ public class SearchPanel extends JPanel implements ActionListener{
         JLabel search = new JLabel("Szukaj");
         title.setFont(new Font("Verdana", 1, 14));
 
-        Vector<String> fromData = Select("SELECT \"przystanek_poczatkowy\" FROM Trasy GROUP BY \"przystanek_poczatkowy\"");
-        JComboBox<String> fromList = new JComboBox<String>(new DefaultComboBoxModel<String>(fromData));
+        fromList = new JComboBox<String>();
         fromList.setActionCommand(Actions.from.name());
         fromList.addActionListener(this);
 
         toList = new JComboBox<String>();
         toList.setActionCommand(Actions.to.name());
         toList.addActionListener(this);
-
-//        UtilDateModel model = new UtilDateModel();
-//        Properties p = new Properties();
-//        p.put("text.today", "Dzisiaj");
-//        p.put("text.month", "Miesiąc");
-//        p.put("text.year", "Year");
-//        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
-//        JDatePickerImpl datePicker= new JDatePickerImpl(datePanel, new DateFormatter());
 
         dateList = new JComboBox<Date>();
         dateList.setActionCommand(Actions.date.name());
@@ -106,7 +94,6 @@ public class SearchPanel extends JPanel implements ActionListener{
         contentPanel.add(to);
         contentPanel.add(toList);
         contentPanel.add(date);
-//        contentPanel.add(datePicker);
         contentPanel.add(dateList);
         contentPanel.add(search);
         contentPanel.add(searchButton);
@@ -116,17 +103,25 @@ public class SearchPanel extends JPanel implements ActionListener{
         contentManager.addLayoutComponent("toLabel", to);
         contentManager.addLayoutComponent("toList", toList);
         contentManager.addLayoutComponent("dateLabel", date);
-//        contentManager.addLayoutComponent("datePicker", datePicker);
         contentManager.addLayoutComponent("dateList",dateList);
         contentManager.addLayoutComponent("searchLabel", search);
         contentManager.addLayoutComponent("searchButton", searchButton);
 
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                super.componentShown(e);
+                Vector<String> fromData = Select("SELECT \"przystanek_poczatkowy\" FROM Trasy GROUP BY \"przystanek_poczatkowy\"");
+                fromList.setModel(new DefaultComboBoxModel<String>(fromData));
+            }
+        });
 
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand() == Actions.ret.name()){
+            clearForm();
             mainPanel.layoutManager.show(mainPanel, "menuPanel");
         }
         if(e.getActionCommand() == Actions.from.name()){
@@ -152,10 +147,10 @@ public class SearchPanel extends JPanel implements ActionListener{
         if(e.getActionCommand() == Actions.date.name()){
             JComboBox<Date> cb = (JComboBox<Date>) e.getSource();
             selectedDate = (java.sql.Date) cb.getSelectedObjects()[0];
-            Vector<String> routeData = Select("SELECT \"id_kursu\" " +
-                    "FROM Kursy FULL OUTER JOIN POZYCJE_ROZKLADU_JAZDY ON KURSY.\"id_kursu\" = POZYCJE_ROZKLADU_JAZDY.\"id_kursu\"" +
-                    "WHERE \"data\" =" + "TO_DATE('" + selectedDate + "', 'yyyy-mm-dd') AND \"przystanek_poczatkowy\" = ");
-            selectedRouteID = Integer.parseInt(routeData.lastElement());
+            Vector<String> selectedRoute = Select("SELECT \"id_kursu\" " +
+                    "FROM Kursy FULL OUTER JOIN POZYCJE_ROZKLADU_JAZDY ON KURSY.\"id_rozkladu\" = POZYCJE_ROZKLADU_JAZDY.\"id_rozkladu\"" +
+                    "WHERE \"data\" =" + "TO_DATE('" + selectedDate + "', 'yyyy-mm-dd') AND  \"id_trasy\" = " + routeData.lastElement());
+            selectedRouteID = Integer.parseInt(selectedRoute.lastElement());
         }
         if(e.getActionCommand() == Actions.search.name()){
             mainPanel.layoutManager.show(mainPanel, "passengerPanel");
@@ -198,5 +193,16 @@ public class SearchPanel extends JPanel implements ActionListener{
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void clearForm(){
+        fromList.setSelectedItem(null);
+        toList.setSelectedItem(null);
+        dateList.setSelectedItem(null);
+
+        selectedStopA = null;
+        selectedStopB = null;
+        selectedDate = null;
+        selectedRouteID = null;
     }
 }
