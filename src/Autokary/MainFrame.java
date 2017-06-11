@@ -48,7 +48,7 @@ public class MainFrame extends JFrame {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(((int)screenSize.getWidth()-d.width)/2, ((int)screenSize.getHeight()-d.height)/2);
     }
-
+    //Funkcja nawiązująca połączenie z bazą danych. Tworzy obiekt typu Connection na podstawie urla zawierającego hosta i port pod którymi znajduje się baza danych, jej identyfikator i dane użytkowników.
     protected boolean connectToDB(){
 
         try {

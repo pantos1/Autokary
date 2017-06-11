@@ -172,9 +172,9 @@ public class AddingPanel extends JPanel implements ActionListener{
                    "WHERE Pozycje_rozkladu_jazdy.\"id_rozkladu\" = " + selectedRoute +"" +
                     "AND Pozycje_rozkladu_jazdy.\"liczba_stewardow\" = 2");
 
-            if (numberOfStewards.isEmpty()){
-                steward2List.setEditable(true);
-                steward2List.setEnabled(true);
+            if (!(numberOfStewards.isEmpty())){
+            steward2List.setEditable(true);
+            steward2List.setEnabled(true);
             }
 
         }
@@ -221,14 +221,61 @@ public class AddingPanel extends JPanel implements ActionListener{
             try{
                 stmt = conn.createStatement();
                 String sql = "INSERT INTO Kursy " +
-                        "(\"id_rozkładu\", \"id_autokaru\", \"ID_KIEROWCY\", \"ID_STEWARDA1\", \"ID_STEWARDA2\", \"DATA\") " +
-                        "VALUES ("+selectedRoute+","+selectedBus+ ","+selectedDriver+","+selectedSteward1+","+selectedSteward2+"," +
-                        "TO_DATE('"+selectedDate+"', 'yyyy/mm/dd'))";
+                        "(\"id_kursu\",\"id_rozkladu\", \"id_autokaru\", \"ID_KIEROWCY\", \"ID_STEWARDA1\", \"ID_STEWARDA2\", \"DATA\") " +
+                        "VALUES (seq_kursy.nextval,"+selectedRoute+","+selectedBus+ ","+selectedDriver+","+selectedSteward1+","+selectedSteward2+"," +
+                        "TO_DATE('"+PlannerPanel.selectedDate+"', 'yyyy-mm-dd'))";
                 n = stmt.executeUpdate(sql);
                 rs.close();
                 stmt.close();
             } catch (SQLException ex){
                 ex.printStackTrace();
+            }
+
+            try{
+                stmt = conn.createStatement();
+                String sql = "UPDATE Grafiki_autokarow SET \"STATUS\" = '0'"+
+                            "WHERE \"ID_AUTOKARU\" = '"+selectedBus+ "' AND \"DATA\" = '"+PlannerPanel.selectedDate+"'";
+                n = stmt.executeUpdate(sql);
+                rs.close();
+                stmt.close();
+            } catch (SQLException ex){
+                ex.printStackTrace();
+            }
+
+            try{
+                stmt = conn.createStatement();
+                String sql = "UPDATE GRAFIKI_PRACOWNIKOW SET \"status\" = '0'"+
+                    "WHERE \"id_pracownika\" = '"+selectedDriver+ "' AND \"DATA\" = '"+PlannerPanel.selectedDate+"'";
+                n = stmt.executeUpdate(sql);
+                rs.close();
+                stmt.close();
+            } catch (SQLException ex){
+                ex.printStackTrace();
+            }
+
+
+            try{
+                stmt = conn.createStatement();
+                String sql = "UPDATE GRAFIKI_PRACOWNIKOW SET \"status\" = '0'"+
+                        "WHERE \"id_pracownika\" = '"+selectedSteward1+ "' AND \"DATA\" = '"+PlannerPanel.selectedDate+"'";
+                n = stmt.executeUpdate(sql);
+                rs.close();
+                stmt.close();
+            } catch (SQLException ex){
+                ex.printStackTrace();
+            }
+
+            if (!(selectedSteward2 == null)) {
+                try {
+                    stmt = conn.createStatement();
+                    String sql = "UPDATE GRAFIKI_PRACOWNIKOW SET \"status\" = '0'"+
+                            "WHERE \"id_pracownika\" = '"+selectedSteward2+ "' AND \"DATA\" = '"+PlannerPanel.selectedDate+"'";
+                    n = stmt.executeUpdate(sql);
+                    rs.close();
+                    stmt.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
             mainPanel.layoutManager.show(mainPanel, "menuPanel");
         }
