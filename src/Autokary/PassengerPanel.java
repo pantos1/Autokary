@@ -158,15 +158,13 @@ public class PassengerPanel extends JPanel implements ActionListener {
                         sql = "INSERT INTO Pasazerowie" +
                                 "(\"id_pasażera\", \"imię\", \"nazwisko\", \"data_urodzenia_pasażera\")" +
                                 "VALUES (seq_pasażer.nextval, '" + passengersName + "','" + passengersSurname + "',TO_DATE('" + passengersDOB + "', 'yyyy-mm-dd'))";
-                        n = stmt.executeUpdate(sql, 1);
+                        n = stmt.executeUpdate(sql);
                         if (n == 0) {
                             JOptionPane.showMessageDialog(this, "Nie udało się dodać pasażera do bazy danych", "Błąd wstawiania", JOptionPane.ERROR_MESSAGE);
                         }
-                        rs = stmt.getGeneratedKeys();
-                        if(rs.next()) passengersID = rs.getInt(1);
                         rs.close();
                         stmt.close();
-                    } else {
+                    }
                         stmt = conn.createStatement();
                         sql = "SELECT \"id_pasażera\" " +
                                 "FROM Pasazerowie " +
@@ -177,7 +175,6 @@ public class PassengerPanel extends JPanel implements ActionListener {
                         if(rs.next()) passengersID = rs.getInt(1);
                         rs.close();
                         stmt.close();
-                    }
                 }
                 stmt = conn.createStatement();
                 sql = "INSERT INTO Rezerwacje " +
